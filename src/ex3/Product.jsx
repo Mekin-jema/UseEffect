@@ -6,16 +6,17 @@ function Products() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-  async function fetchData() {
-    // You can await here
-   const data=await fetch('https://fakestoreapi.com/products')
-   const response=await data.json()
-    setProducts(response)
-    // ...
-  }
-  fetchData();
-}, []); // Or [] if effect doesn't need props or state
-
+    fetch('https://fakestoreapi.com/products')
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch products');
+        }
+        return res.json();
+      })
+      .then((data) => setProducts(data))
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
   if (loading) return <p>Loading products...</p>;
   if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
